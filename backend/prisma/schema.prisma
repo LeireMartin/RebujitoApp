@@ -1,0 +1,187 @@
+// prisma/schema.prisma
+// Modelo completo de Rebujito
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Usuarios ───────────────────────────────────────────────────────────────
+model Usuario {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  passwordHash   String
+  nombre         String
+  rol            Rol       @default(JUGADOR)
+  avatarUrl      String?
+  creadoEn       DateTime  @default(now())
+  actualizadoEn  DateTime  @updatedAt
+
+  jugador        Jugador?
+  refreshTokens  RefreshToken[]
+
+  @@map("usuarios")
+}
+
+enum Rol {
+  ADMIN
+  JUGADOR
+}
+
+// ─── Refresh Tokens ─────────────────────────────────────────────────────────
+model RefreshToken {
+  id         String   @id @default(uuid())
+  token      String   @unique
+  usuarioId  String
+  expiresAt  DateTime
+  creadoEn   DateTime @default(now())
+
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+// ─── Partidas ────────────────────────────────────────────────────────────────
+model Partida {
+  id              String         @id @default(uuid())
+  codigoSala      String         @unique
+  modo            ModoPartida    @default(LOCAL)
+  estado          EstadoPartida  @default(CONFIGURANDO)
+  tiempoTurno     Int            @default(60)
+  palabrasPorFase Int            @default(20)
+  faseActual      Int            @default(0)
+  creadoEn        DateTime       @default(now())
+  actualizadoEn   DateTime       @updatedAt
+
+  equipos         Equipo[]
+  palabras        Palabra[]
+  turnos          Turno[]
+
+  @@map("partidas")
+}
+
+enum ModoPartida {
+  LOCAL
+  RED
+}
+
+enum EstadoPartida {
+  CONFIGURANDO
+  JUGANDO
+  PAUSADA
+  FINALIZADA
+}
+
+// ─── Equipos ─────────────────────────────────────────────────────────────────
+model Equipo {
+  id              String   @id @default(uuid())
+  partidaId       String
+  nombre          String
+  puntuacionTotal Int      @default(0)
+  orden           Int      @default(0)
+  creadoEn        DateTime @default(now())
+
+  partida         Partida   @relation(fields: [partidaId], references: [id], onDelete: Cascade)
+  jugadores       Jugador[]
+  turnos          Turno[]
+
+  @@map("equipos")
+}
+
+// ─── Jugadores ───────────────────────────────────────────────────────────────
+model Jugador {
+  id         String   @id @default(uuid())
+  equipoId   String
+  usuarioId  String?  @unique
+  nombre     String
+  avatar     String?
+  creadoEn   DateTime @default(now())
+
+  equipo     Equipo   @relation(fields: [equipoId], references: [id], onDelete: Cascade)
+  usuario    Usuario? @relation(fields: [usuarioId], references: [id])
+
+  @@map("jugadores")
+}
+
+// ─── Temáticas ───────────────────────────────────────────────────────────────
+model Tematica {
+  id           String    @id @default(uuid())
+  nombre       String    @unique
+  predefinida  Boolean   @default(true)
+  icono        String?
+  creadoEn     DateTime  @default(now())
+
+  palabras     Palabra[]
+
+  @@map("tematicas")
+}
+
+// ─── Palabras ────────────────────────────────────────────────────────────────
+model Palabra {
+  id          String       @id @default(uuid())
+  partidaId   String
+  tematicaId  String?
+  texto       String
+  origen      OrigenPalabra @default(PREDEFINIDA)
+  creadoEn    DateTime     @default(now())
+
+  partida     Partida      @relation(fields: [partidaId], references: [id], onDelete: Cascade)
+  tematica    Tematica?    @relation(fields: [tematicaId], references: [id])
+  resultados  ResultadoPalabra[]
+
+  @@map("palabras")
+}
+
+enum OrigenPalabra {
+  PREDEFINIDA
+  PERSONALIZADA
+}
+
+// ─── Turnos ──────────────────────────────────────────────────────────────────
+model Turno {
+  id          String      @id @default(uuid())
+  partidaId   String
+  equipoId    String
+  fase        Int
+  numero      Int
+  inicio      DateTime?
+  fin         DateTime?
+  estado      EstadoTurno @default(PENDIENTE)
+  creadoEn    DateTime    @default(now())
+
+  partida     Partida     @relation(fields: [partidaId], references: [id], onDelete: Cascade)
+  equipo      Equipo      @relation(fields: [equipoId], references: [id])
+  resultados  ResultadoPalabra[]
+
+  @@map("turnos")
+}
+
+enum EstadoTurno {
+  PENDIENTE
+  ACTIVO
+  FINALIZADO
+}
+
+// ─── Resultados ───────────────────────────────────────────────────────────────
+model ResultadoPalabra {
+  id         String          @id @default(uuid())
+  turnoId    String
+  palabraId  String
+  resultado  ResultadoTipo
+  creadoEn   DateTime        @default(now())
+
+  turno      Turno           @relation(fields: [turnoId], references: [id], onDelete: Cascade)
+  palabra    Palabra         @relation(fields: [palabraId], references: [id])
+
+  @@unique([turnoId, palabraId])
+  @@map("resultados_palabras")
+}
+
+enum ResultadoTipo {
+  ADIVINADA
+  PASADA
+}
