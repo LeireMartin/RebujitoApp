@@ -79,13 +79,13 @@ enum EstadoPartida {
 // ─── Equipos ─────────────────────────────────────────────────────────────────
 model Equipo {
   id              String   @id @default(uuid())
-  partidaId       String
+  partidaId       String?
   nombre          String
   puntuacionTotal Int      @default(0)
   orden           Int      @default(0)
   creadoEn        DateTime @default(now())
 
-  partida         Partida   @relation(fields: [partidaId], references: [id], onDelete: Cascade)
+  partida         Partida?   @relation(fields: [partidaId], references: [id], onDelete: Cascade)
   jugadores       Jugador[]
   turnos          Turno[]
 
@@ -123,13 +123,13 @@ model Tematica {
 // ─── Palabras ────────────────────────────────────────────────────────────────
 model Palabra {
   id          String       @id @default(uuid())
-  partidaId   String
+  partidaId   String?
   tematicaId  String?
   texto       String
   origen      OrigenPalabra @default(PREDEFINIDA)
   creadoEn    DateTime     @default(now())
 
-  partida     Partida      @relation(fields: [partidaId], references: [id], onDelete: Cascade)
+  partida     Partida?  @relation(fields: [partidaId], references: [id], onDelete: Cascade)
   tematica    Tematica?    @relation(fields: [tematicaId], references: [id])
   resultados  ResultadoPalabra[]
 
