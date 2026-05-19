@@ -54,10 +54,10 @@ export function validate(schema) {
 }
 
 // ─── 4. Rate limiting ─────────────────────────────────────────────────────────
-// Límite general: 100 peticiones / 15 min por IP
+// Límite general: 1000 peticiones / 15 min por IP
 export const generalLimiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
-  max:      parseInt(process.env.RATE_LIMIT_MAX) || 100,
+  max:      parseInt(process.env.RATE_LIMIT_MAX) || 1000,
   standardHeaders: true,
   legacyHeaders:   false,
   message: { ok: false, error: 'Demasiadas peticiones. Inténtalo más tarde.' },

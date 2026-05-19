@@ -1,6 +1,6 @@
 // src/controllers/palabras.controller.js
 import prisma from '../config/prisma.js'
-import { ok, created, notFound, conflict, badRequest } from '../utils/response.js'
+import { ok, notFound, conflict, badRequest } from '../utils/response.js'
 
 // ─── GET /api/tematicas ───────────────────────────────────────────────────────
 export async function listarTematicas(req, res, next) {
@@ -13,7 +13,6 @@ export async function listarTematicas(req, res, next) {
 }
 
 // ─── POST /api/partidas/:id/palabras ──────────────────────────────────────────
-// Llena el Rebujito con palabras de temáticas elegidas + palabras personalizadas
 export async function agregarPalabras(req, res, next) {
   try {
     const { id: partidaId } = req.params
@@ -23,28 +22,26 @@ export async function agregarPalabras(req, res, next) {
     if (!partida) return notFound(res, 'Partida no encontrada')
     if (partida.estado !== 'CONFIGURANDO') return conflict(res, 'La partida ya está en curso')
 
-    // Eliminar palabras previas si se vuelve a configurar
+    // Eliminar palabras previas
     await prisma.palabra.deleteMany({ where: { partidaId } })
 
     const palabrasACrear = []
 
-    // Palabras de temáticas predefinidas (traer todas las de esa temática)
+    // Coger palabras del catálogo global para las temáticas elegidas
     if (tematicas.length > 0) {
-      // En producción tendrías una tabla palabras_predefinidas por temática.
-      // Aquí usamos las palabras que ya hay en la partida con esas temáticas
-      // como ejemplo; el seed las poblaría desde un catálogo externo.
-      const tematicasDb = await prisma.tematica.findMany({
-        where: { id: { in: tematicas } },
+      const palabrasCatalogo = await prisma.palabra.findMany({
+        where: {
+          tematicaId: { in: tematicas },
+          partidaId:  null,
+        },
+        select: { texto: true, tematicaId: true },
       })
-      if (tematicasDb.length !== tematicas.length) {
-        return badRequest(res, 'Una o más temáticas no existen')
-      }
-      // Añadir placeholder por temática (en prod vendrían de un catálogo)
-      tematicasDb.forEach(t => {
+
+      palabrasCatalogo.forEach(p => {
         palabrasACrear.push({
           partidaId,
-          tematicaId: t.id,
-          texto:      `[${t.nombre}]`,   // sustituir por catálogo real
+          tematicaId: p.tematicaId,
+          texto:      p.texto,
           origen:     'PREDEFINIDA',
         })
       })
@@ -55,12 +52,18 @@ export async function agregarPalabras(req, res, next) {
       palabrasACrear.push({ partidaId, texto, origen: 'PERSONALIZADA' })
     })
 
-    // Insertar todas en una sola transacción
+    if (palabrasACrear.length === 0) {
+      return badRequest(res, 'No se encontraron palabras para las temáticas seleccionadas')
+    }
+
+    // Mezclar aleatoriamente
+    palabrasACrear.sort(() => Math.random() - 0.5)
+
     await prisma.palabra.createMany({ data: palabrasACrear })
 
     ok(res, {
       totalPalabras: palabrasACrear.length,
-      mensaje: '☻ Rebujito listo ☻',
+      mensaje: 'Rebujito listo',
     }, 201)
   } catch (err) { next(err) }
 }

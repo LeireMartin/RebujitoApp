@@ -10,7 +10,7 @@ export default function Inicio() {
 
       {/* Logo */}
       <div className="mb-8 text-center">
-        <div className="text-6xl mb-4">🥗</div>
+        <div className="text-6xl mb-4">Rebujito</div>
         <h1 className="text-4xl font-bold text-white mb-2">Rebujito</h1>
         <p className="text-gray-400">El juego de las palabras</p>
       </div>
