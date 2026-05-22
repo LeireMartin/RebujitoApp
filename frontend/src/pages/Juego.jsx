@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGame } from "../context/GameContext";
-import logo from '../assets/rebujito--logo.png'
+import logo from "../assets/rebujito--logo.png";
 
 import {
   iniciarTurno,
@@ -25,6 +25,7 @@ export default function Juego() {
   const [turnoActivo, setTurnoActivo] = useState(false);
   const [segundos, setSegundos] = useState(60);
   const [adivinadas, setAdivinadas] = useState(0);
+  const [resultadoUltima, setResultadoUltima] = useState(null);
   const [cargando, setCargando] = useState(false);
   const timerRef = useRef(null);
 
@@ -94,6 +95,8 @@ export default function Juego() {
         resultado,
       });
       const data = res.data.data;
+      setResultadoUltima(resultado);
+      setTimeout(() => setResultadoUltima(null), 600);
 
       if (resultado === "ADIVINADA") setAdivinadas((a) => a + 1);
 
@@ -143,9 +146,9 @@ export default function Juego() {
     <div className="min-h-screen flex flex-col items-center justify-center px-4 select-none">
       <div className="w-full max-w-sm">
         {/* Logo */}
-                        <div className=" text-center">
-                          <img src={logo} alt="Logo de Rebujito" className="w-56 mx-auto" />
-                        </div>
+        <div className=" text-center">
+          <img src={logo} alt="Logo de Rebujito" className="w-56 mx-auto" />
+        </div>
 
         {!turnoActivo ? (
           /* Pantalla de espera */
@@ -164,21 +167,22 @@ export default function Juego() {
             </button>
           </div>
         ) : (
-          
           /* Pantalla de juego */
           <>
-          {/* Cabecera */}
-        <div className="flex justify-between items-center mb-8">
-          <span className="text-xs px-3 py-1 rounded-full bg-teal-900 text-teal-300 font-medium">
-            Fase {partida?.faseActual > 0 ? partida.faseActual : 1} ·{" "}
-            {partida?.faseActual === 1
-              ? "Descripción"
-              : partida?.faseActual === 2
-                ? "Una palabra"
-                : "Mímica"}{" "}
-          </span>
-          <span className="text-gray-400 text-sm">Equipo: {equipoActual?.nombre}</span>
-        </div>
+            {/* Cabecera */}
+            <div className="flex justify-between items-center mb-8">
+              <span className="text-xs px-3 py-1 rounded-full bg-teal-900 text-teal-300 font-medium">
+                Fase {partida?.faseActual > 0 ? partida.faseActual : 1} ·{" "}
+                {partida?.faseActual === 1
+                  ? "Descripción"
+                  : partida?.faseActual === 2
+                    ? "Una palabra"
+                    : "Mímica"}{" "}
+              </span>
+              <span className="text-gray-400 text-sm">
+                Equipo: {equipoActual?.nombre}
+              </span>
+            </div>
             {/* Temporizador */}
             <div className="flex flex-col items-center mb-6">
               <div className="relative w-24 h-24 mb-2">
@@ -216,9 +220,25 @@ export default function Juego() {
             </div>
 
             {/* Palabra */}
-            <div className="bg-gray-800 border-2 border-teal-500 rounded-2xl p-6 text-center mb-6">
+            <div
+              className={`rounded-2xl p-6 text-center mb-6 border-2 transition-all duration-300 ${
+                resultadoUltima === "ADIVINADA"
+                  ? "bg-teal-900 border-teal-400"
+                  : resultadoUltima === "PASADA"
+                    ? "bg-red-900 border-red-400"
+                    : "bg-gray-800 border-teal-500"
+              }`}
+            >
               <p className="text-xs text-gray-400 mb-2">ADIVINA ESTA PALABRA</p>
-              <p className="text-3xl font-bold text-white mb-4">
+              <p
+                className={`text-3xl font-bold mb-4 transition-colors duration-300 ${
+                  resultadoUltima === "ADIVINADA"
+                    ? "text-teal-300"
+                    : resultadoUltima === "PASADA"
+                      ? "text-red-300"
+                      : "text-white"
+                }`}
+              >
                 {palabra?.texto}
               </p>
               <div className="border-t border-gray-700 pt-4">
@@ -230,7 +250,7 @@ export default function Juego() {
                 )}
                 {partida?.faseActual === 2 && (
                   <p className="text-sm text-teal-300">
-                     Solo puedes decir <strong>una única palabra</strong> como
+                    Solo puedes decir <strong>una única palabra</strong> como
                     pista, nada más
                   </p>
                 )}
