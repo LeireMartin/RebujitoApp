@@ -11,6 +11,7 @@ import { initSocket }                                        from './socket/inde
 import { generalLimiter, errorHandler, notFoundHandler }    from './middlewares/index.js'
 
 const app        = express()
+app.set('trust proxy', 1)
 const httpServer = createServer(app)
 const PORT       = process.env.PORT ?? 3000
 
