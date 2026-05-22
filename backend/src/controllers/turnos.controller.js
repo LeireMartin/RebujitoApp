@@ -17,16 +17,16 @@ export async function iniciarTurno(req, res, next) {
     }
 
     // No puede haber un turno activo simultáneo
-   // Si hay turno activo lo cerramos automáticamente
-const turnoActivo = await prisma.turno.findFirst({
-  where: { partidaId, estado: 'ACTIVO' },
-})
-if (turnoActivo) {
-  await prisma.turno.update({
-    where: { id: turnoActivo.id },
-    data:  { estado: 'FINALIZADO', fin: new Date() },
-  })
-}
+    // Si hay turno activo lo cerramos automáticamente
+    const turnoActivo = await prisma.turno.findFirst({
+      where: { partidaId, estado: "ACTIVO" },
+    });
+    if (turnoActivo) {
+      await prisma.turno.update({
+        where: { id: turnoActivo.id },
+        data: { estado: "FINALIZADO", fin: new Date() },
+      });
+    }
 
     // Calcular número de turno
     const ultimoTurno = await prisma.turno.findFirst({
@@ -60,9 +60,11 @@ if (turnoActivo) {
     });
     const usadasIds = palabrasUsadasIds.map((r) => r.palabraId);
 
-    const primeraPalabra = await prisma.palabra.findFirst({
+    const palabrasDisponibles = await prisma.palabra.findMany({
       where: { partidaId, id: { notIn: usadasIds } },
     });
+    palabrasDisponibles.sort(() => Math.random() - 0.5);
+    const primeraPalabra = palabrasDisponibles[0] ?? null;
 
     const palabrasRestantes = await prisma.palabra.count({
       where: { partidaId, id: { notIn: usadasIds } },
@@ -118,9 +120,11 @@ export async function registrarResultado(req, res, next) {
     });
     const usadasIds = usadas.map((u) => u.palabraId);
 
-    const siguientePalabra = await prisma.palabra.findFirst({
+    const palabrasDisponibles = await prisma.palabra.findMany({
       where: { partidaId: turno.partidaId, id: { notIn: usadasIds } },
     });
+    palabrasDisponibles.sort(() => Math.random() - 0.5);
+    const siguientePalabra = palabrasDisponibles[0] ?? null;
     const palabrasRestantes = await prisma.palabra.count({
       where: { partidaId: turno.partidaId, id: { notIn: usadasIds } },
     });
