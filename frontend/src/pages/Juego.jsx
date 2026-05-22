@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGame } from "../context/GameContext";
+import logo from '../assets/rebujito--logo.png'
+
 import {
   iniciarTurno,
   registrarResultado,
@@ -37,7 +39,7 @@ export default function Juego() {
           </h2>
           <button
             onClick={() => navigate("/")}
-            className="py-3 px-6 bg-violet-600 hover:bg-violet-700 text-white rounded-xl"
+            className="py-3 px-6 bg-teal-600 hover:bg-teal-700 text-white rounded-xl"
           >
             Volver al inicio
           </button>
@@ -138,9 +140,34 @@ export default function Juego() {
   const pct = (segundos / (partida?.tiempoTurno ?? 60)) * 100;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 select-none">
       <div className="w-full max-w-sm">
-        {/* Cabecera */}
+        {/* Logo */}
+                        <div className=" text-center">
+                          <img src={logo} alt="Logo de Rebujito" className="w-56 mx-auto" />
+                        </div>
+
+        {!turnoActivo ? (
+          /* Pantalla de espera */
+          <div className="text-center">
+            <div className="text-5xl mb-4">😎</div>
+            <h2 className="text-2xl font-bold text-white mb-2">Turno de</h2>
+            <h3 className="text-3xl font-bold text-teal-400 mb-8">
+              {equipoActual?.nombre}
+            </h3>
+            <button
+              onClick={handleIniciarTurno}
+              disabled={cargando}
+              className="w-full py-4 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white font-bold text-lg rounded-xl transition"
+            >
+              {cargando ? "Cargando..." : "¡Empezar turno!"}
+            </button>
+          </div>
+        ) : (
+          
+          /* Pantalla de juego */
+          <>
+          {/* Cabecera */}
         <div className="flex justify-between items-center mb-8">
           <span className="text-xs px-3 py-1 rounded-full bg-teal-900 text-teal-300 font-medium">
             Fase {partida?.faseActual > 0 ? partida.faseActual : 1} ·{" "}
@@ -150,28 +177,8 @@ export default function Juego() {
                 ? "Una palabra"
                 : "Mímica"}{" "}
           </span>
-          <span className="text-gray-400 text-sm">{equipoActual?.nombre}</span>
+          <span className="text-gray-400 text-sm">Equipo: {equipoActual?.nombre}</span>
         </div>
-
-        {!turnoActivo ? (
-          /* Pantalla de espera */
-          <div className="text-center">
-            <div className="text-5xl mb-4">🎯</div>
-            <h2 className="text-2xl font-bold text-white mb-2">Turno de</h2>
-            <h3 className="text-3xl font-bold text-violet-400 mb-8">
-              {equipoActual?.nombre}
-            </h3>
-            <button
-              onClick={handleIniciarTurno}
-              disabled={cargando}
-              className="w-full py-4 bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white font-bold text-lg rounded-xl transition"
-            >
-              {cargando ? "Cargando..." : "¡Empezar turno!"}
-            </button>
-          </div>
-        ) : (
-          /* Pantalla de juego */
-          <>
             {/* Temporizador */}
             <div className="flex flex-col items-center mb-6">
               <div className="relative w-24 h-24 mb-2">
@@ -189,7 +196,7 @@ export default function Juego() {
                     cy="48"
                     r="40"
                     fill="none"
-                    stroke="#7c3aed"
+                    stroke="#009d9a"
                     strokeWidth="8"
                     strokeDasharray={`${2 * Math.PI * 40}`}
                     strokeDashoffset={`${2 * Math.PI * 40 * (1 - pct / 100)}`}
@@ -209,24 +216,46 @@ export default function Juego() {
             </div>
 
             {/* Palabra */}
-            <div className="bg-gray-800 border-2 border-violet-500 rounded-2xl p-8 text-center mb-6">
+            <div className="bg-gray-800 border-2 border-teal-500 rounded-2xl p-6 text-center mb-6">
               <p className="text-xs text-gray-400 mb-2">ADIVINA ESTA PALABRA</p>
-              <p className="text-3xl font-bold text-white">{palabra?.texto}</p>
+              <p className="text-3xl font-bold text-white mb-4">
+                {palabra?.texto}
+              </p>
+              <div className="border-t border-gray-700 pt-4">
+                {partida?.faseActual === 1 && (
+                  <p className="text-sm text-teal-300">
+                    Describe la palabra con tus propias palabras, sin decir
+                    ninguna parte de ella
+                  </p>
+                )}
+                {partida?.faseActual === 2 && (
+                  <p className="text-sm text-teal-300">
+                     Solo puedes decir <strong>una única palabra</strong> como
+                    pista, nada más
+                  </p>
+                )}
+                {partida?.faseActual === 3 && (
+                  <p className="text-sm text-teal-300">
+                    Representa la palabra con <strong>mímica</strong>, sin
+                    hablar ni hacer sonidos
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Botones */}
             <div className="grid grid-cols-2 gap-4">
               <button
                 onClick={() => handleResultado("ADIVINADA")}
-                className="py-4 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-lg transition"
+                className="py-4 bg-teal-600 hover:bg-lime-500 text-white font-bold rounded-xl text-lg transition"
               >
                 ✓ Adivinada
               </button>
               <button
                 onClick={() => handleResultado("PASADA")}
-                className="py-4 bg-red-900 hover:bg-red-800 text-white font-bold rounded-xl text-lg transition"
+                className="py-4 bg-red-900 hover:bg-red-600 text-white font-bold rounded-xl text-lg transition"
               >
-                → Paso
+                X Paso
               </button>
             </div>
 

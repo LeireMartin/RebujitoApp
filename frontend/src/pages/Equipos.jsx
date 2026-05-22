@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
 import { crearPartida } from '../services/api'
+import logo from '../assets/rebujito--logo.png'
 
 export default function Equipos() {
   const navigate = useNavigate()
@@ -50,15 +51,21 @@ export default function Equipos() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-10">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-teal-800 flex flex-col items-center justify-center px-4">
 
-        <button onClick={() => navigate('/')} className="text-gray-400 hover:text-white mb-6 flex items-center gap-2">
+      {/* Tarjeta blanca */}
+      <div className="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-sm flex flex-col items-center">
+
+        <button onClick={() => navigate('/')} className="text-teal-600 hover:text-teal-400 mb-6 flex items-center gap-2">
           ← Volver
         </button>
+        {/* Logo */}
+        <div className="mb-6 text-center">
+          <img src={logo} alt="Logo de Rebujito" className="w-56 mx-auto mb-4" />
+        </div>
 
-        <h2 className="text-2xl font-bold text-white mb-1">Configurar equipos</h2>
-        <p className="text-gray-400 text-sm mb-6">Mínimo 2 equipos</p>
+        <h2 className="text-2xl font-bold text-teal-800 mb-1">Configurar equipos</h2>
+        <p className="text-teal-600 text-sm mb-6">Mínimo 3 personas en cada uno</p>
 
         {/* Equipos */}
         <div className="flex flex-col gap-3 mb-4">
@@ -69,30 +76,30 @@ export default function Equipos() {
                 placeholder={`Equipo ${i + 1}`}
                 value={eq}
                 onChange={e => actualizarEquipo(i, e.target.value)}
-                className="flex-1 py-3 px-4 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-violet-500"
+                className="flex-1 py-3 px-4 bg-teal-600 border border-teal-800 rounded-xl text-white placeholder-white-500 focus:outline-none focus:border-teal-500"
               />
               {equipos.length > 2 && (
-                <button onClick={() => eliminarEquipo(i)} className="text-gray-500 hover:text-red-400 text-xl">✕</button>
+                <button onClick={() => eliminarEquipo(i)} className="text-teal-500 hover:text-red-600 text-xl">✕</button>
               )}
             </div>
           ))}
         </div>
 
         {equipos.length < 6 && (
-          <button onClick={añadirEquipo} className="w-full py-3 border border-dashed border-violet-500 text-violet-400 rounded-xl mb-6 hover:bg-violet-950 transition">
+          <button onClick={añadirEquipo} className="w-full py-3 border border-dashed border-teal-500 text-teal-400 rounded-xl mb-6 hover:bg-teal-950 transition">
             + Añadir equipo
           </button>
         )}
 
         {/* Ajustes */}
-        <div className="bg-gray-800 rounded-xl p-4 mb-6 flex flex-col gap-4">
+        <div className="bg-teal-800 rounded-xl p-4 mb-6 flex flex-col gap-4">
           <div className="flex justify-between items-center">
             <span className="text-gray-300 text-sm">Tiempo por turno</span>
             <div className="flex gap-2">
               {[30, 60, 90].map(t => (
                 <button key={t}
                   onClick={() => setTiempoTurno(t)}
-                  className={`px-3 py-1 rounded-lg text-sm font-medium transition ${tiempoTurno === t ? 'bg-violet-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+                  className={`px-3 py-1 rounded-lg text-sm font-medium transition ${tiempoTurno === t ? 'bg-teal-600 text-white' : 'bg-teal-900 text-gray-300'}`}
                 >{t}s</button>
               ))}
             </div>
@@ -103,7 +110,7 @@ export default function Equipos() {
               {[10, 20, 30].map(p => (
                 <button key={p}
                   onClick={() => setPalabrasPorFase(p)}
-                  className={`px-3 py-1 rounded-lg text-sm font-medium transition ${palabrasPorFase === p ? 'bg-violet-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+                  className={`px-3 py-1 rounded-lg text-sm font-medium transition ${palabrasPorFase === p ? 'bg-teal-600 text-white' : 'bg-teal-900 text-gray-300'}`}
                 >{p}</button>
               ))}
             </div>
@@ -115,9 +122,9 @@ export default function Equipos() {
         <button
           onClick={handleSubmit}
           disabled={cargando}
-          className="w-full py-4 bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white font-semibold rounded-xl transition"
+          className="w-full py-4 bg-lime-200 hover:bg-lime-700 disabled:opacity-50 text-teal-900 hover:text-amber-50 font-bold rounded-xl transition"
         >
-          {cargando ? 'Creando partida...' : 'Continuar →'}
+          {cargando ? 'Creando partida...' : 'Elige tu rebujito'}
         </button>
 
       </div>

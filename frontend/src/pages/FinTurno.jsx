@@ -9,7 +9,7 @@ export default function FinTurno() {
       <div className="w-full max-w-sm">
         {/* Cabecera */}
         <div className="text-center mb-8">
-          <div className="text-5xl mb-3">⏱</div>
+          <div className="text-5xl mb-3">🤔</div>
           <h2 className="text-2xl font-bold text-white">¡Tiempo!</h2>
           <p className="text-gray-400 text-sm mt-1">Resumen del turno</p>
         </div>
@@ -30,7 +30,7 @@ export default function FinTurno() {
               <p className="text-xs text-gray-400 mt-1">pasadas</p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-violet-400">
+              <p className="text-3xl font-bold text-teal-400">
                 +{state?.puntosGanados ?? 0}
               </p>
               <p className="text-xs text-gray-400 mt-1">puntos</p>
@@ -42,7 +42,7 @@ export default function FinTurno() {
         {state?.siguienteEquipo && (
           <div className="bg-gray-800 rounded-2xl p-4 mb-6 text-center">
             <p className="text-gray-400 text-sm mb-1">Siguiente turno</p>
-            <p className="text-xl font-bold text-violet-400">
+            <p className="text-xl font-bold text-teal-400">
               {state.siguienteEquipo}
             </p>
           </div>
@@ -50,20 +50,20 @@ export default function FinTurno() {
 
         {/* Fase completada */}
         {state?.faseCompletada && (
-          <div className="bg-violet-900 border border-violet-500 rounded-2xl p-4 mb-6 text-center">
-            <p className="text-violet-300 text-sm font-medium">
-              ✨ ¡Fase {state.siguienteFase - 1} completada!
+          <div className="bg-teal-900 border border-teal-500 rounded-2xl p-4 mb-6 text-center">
+            <p className="text-teal-300 text-sm font-medium">
+               ¡Fase {state.siguienteFase - 1} completada!
             </p>
             <p className="text-white font-bold mt-1">
               Empieza la fase {state.siguienteFase} —{" "}
-              {state.siguienteFase === 3 ? "Solo una palabra" : "Mímica"}
+              {state.siguienteFase === 2 ? "Solo una palabra" : "Mímica"}
             </p>
           </div>
         )}
 
         <button
           onClick={() => navigate("/juego")}
-          className="w-full py-4 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl transition"
+          className="w-full py-4 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl transition"
         >
           Siguiente turno →
         </button>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
 import { listarTematicas, agregarPalabras } from '../services/api'
+import logo from '../assets/rebujito--logo.png'
 
 export default function Preparacion() {
   const navigate = useNavigate()
@@ -55,27 +56,33 @@ export default function Preparacion() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-10">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-teal-800 flex flex-col items-center justify-center px-4">
 
-        <div className="flex items-center gap-3 mb-6">
-          <span className="text-xs font-medium px-3 py-1 rounded-full bg-violet-900 text-violet-300">Fase 1</span>
-          <span className="text-gray-400 text-sm">Preparar la ensaladera</span>
+      {/* Tarjeta blanca */}
+      <div className="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-sm flex flex-col items-center">
+
+
+        <div className="flex items-center gap-3 mb-2">
+          <span className="text-teal-600 text-sm">Preparar el Rebujito</span>
         </div>
+        {/* Logo */}
+                <div className=" text-center">
+                  <img src={logo} alt="Logo de Rebujito" className="w-56 mx-auto" />
+                </div>
 
-        <h2 className="text-2xl font-bold text-white mb-1">Elige las temáticas</h2>
-        <p className="text-gray-400 text-sm mb-4">Selecciona mínimo 3</p>
+        <h2 className="text-2xl font-bold text-teal-800 mb-1">Elige las temáticas</h2>
+        <p className="text-teal-600 text-sm mb-4">Selecciona mínimo 3</p>
 
         {/* Temáticas */}
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-4 justify-center">
           {tematicas.map(t => (
             <button
               key={t.id}
               onClick={() => toggleTematica(t.id)}
               className={`px-4 py-2 rounded-full text-sm font-medium border transition ${
                 seleccionadas.includes(t.id)
-                  ? 'bg-violet-600 border-violet-500 text-white'
-                  : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-violet-500'
+                  ? 'bg-teal-600 border-teal-500 text-white'
+                  : 'bg-teal-800 border-teal-700 text-gray-200 hover:bg-teal-700'
               }`}
             >
               {t.icono} {t.nombre}
@@ -84,7 +91,7 @@ export default function Preparacion() {
         </div>
 
         {/* Palabras personalizadas */}
-        <h3 className="text-white font-medium mb-2">O añade palabras propias</h3>
+        <h3 className="text-teal-800 font-medium mb-2">O añade palabras propias</h3>
         <div className="flex gap-2 mb-3">
           <input
             type="text"
@@ -92,11 +99,11 @@ export default function Preparacion() {
             value={palabraInput}
             onChange={e => setPalabraInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && añadirPalabra()}
-            className="flex-1 py-3 px-4 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-violet-500"
+            className="flex-1 py-3 px-4 bg-teal-800 border border-teal-700 rounded-xl text-white placeholder-white-200 focus:outline-none focus:border-teal-500"
           />
           <button
             onClick={añadirPalabra}
-            className="px-4 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-bold transition"
+            className="px-4 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold transition"
           >+</button>
         </div>
 
@@ -117,7 +124,7 @@ export default function Preparacion() {
           </div>
           <div className="h-1.5 bg-gray-700 rounded-full">
             <div
-              className="h-full bg-violet-500 rounded-full transition-all"
+              className="h-full bg-teal-500 rounded-full transition-all"
               style={{ width: `${Math.min((seleccionadas.length / 3) * 100, 100)}%` }}
             />
           </div>
@@ -128,7 +135,7 @@ export default function Preparacion() {
         <button
           onClick={handleSubmit}
           disabled={cargando}
-          className="w-full py-4 bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white font-semibold rounded-xl transition"
+          className="w-full py-4 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white font-semibold rounded-xl transition"
         >
           {cargando ? 'Preparando...' : '¡Empezar a jugar!'}
         </button>

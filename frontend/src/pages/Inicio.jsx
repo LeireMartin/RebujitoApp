@@ -1,45 +1,36 @@
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import logo from '../assets/rebujito--logo.png'
 
 export default function Inicio() {
   const navigate = useNavigate()
   const [codigo, setCodigo] = useState('')
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-teal-800 flex flex-col items-center justify-center px-4">
 
-      {/* Logo */}
-      <div className="mb-8 text-center">
-        <div className="text-6xl mb-4">Rebujito</div>
-        <h1 className="text-4xl font-bold text-white mb-2">Rebujito</h1>
-        <p className="text-gray-400">El juego de las palabras</p>
-      </div>
+      {/* Tarjeta blanca */}
+      <div className="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-sm flex flex-col items-center">
 
-      {/* Botones */}
-      <div className="w-full max-w-sm flex flex-col gap-4">
+        {/* Logo */}
+        <div className="mb-6 text-center">
+          <img src={logo} alt="Logo de Rebujito" className="w-56 mx-auto mb-4" />
+          <h1 className="text-3xl font-bold text-teal-800 mb-1">Rebujito</h1>
+          <p className="text-teal-600 text-sm">El juego de las palabras</p>
+        </div>
 
+        {/* Botón */}
         <button
           onClick={() => navigate('/equipos')}
-          className="w-full py-4 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl transition"
+          className="w-full py-4 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl transition mb-6"
         >
           Nueva partida
         </button>
 
-        <div className="flex flex-col gap-2">
-          <input
-            type="text"
-            placeholder="Código de sala"
-            value={codigo}
-            onChange={e => setCodigo(e.target.value.toUpperCase())}
-            maxLength={5}
-            className="w-full py-3 px-4 bg-gray-800 border border-gray-700 rounded-xl text-white text-center text-lg tracking-widest placeholder-gray-500 focus:outline-none focus:border-violet-500"
-          />
-          <button
-            disabled={codigo.length !== 5}
-            className="w-full py-3 bg-gray-700 hover:bg-gray-600 disabled:opacity-40 text-white font-semibold rounded-xl transition"
-          >
-            Unirse con código
-          </button>
+        {/* Créditos */}
+        <div className="text-center">
+          <p className="text-teal-600 text-sm">Trabajo de Final de Desarrollo Aplicaciones Web</p>
+          <p className="text-teal-800 font-bold text-xl mt-1">Leire Martín</p>
         </div>
 
       </div>
