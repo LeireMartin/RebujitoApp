@@ -30,6 +30,9 @@ export default function Juego() {
   const timerRef = useRef(null);
 
   const equipoActual = equipos[equipoActualIdx];
+  if (!equipoActual && equipos.length > 0) {
+  setEquipoActualIdx(0)
+}
   if (!partida) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4">
